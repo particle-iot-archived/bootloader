@@ -30,12 +30,24 @@ C_DEPS += \
 ./src/usb_istr.d \
 ./src/usb_prop.d 
 
+# make STM32_DEVICE uppercase
+STM32_DEVICE_SYMBOL  = $(shell echo $(STM32_DEVICE) | tr a-z A-Z)
+
+INCLUDES+=-I"../../core-common-lib/CMSIS/Include"
+INCLUDES+=-I"../../core-common-lib/CMSIS/Device/ST/STM32F10x/Include"
+INCLUDES+=-I"../../core-common-lib/STM32F10x_StdPeriph_Driver/inc"
+INCLUDES+=-I"../../core-common-lib/STM32_USB-FS-Device_Driver/inc"
+INCLUDES+=-I"../../core-common-lib/CC3000_Host_Driver"
+INCLUDES+=-I"../../core-common-lib/SPARK_Firmware_Driver/inc"
+INCLUDES+=-I"../../core-common-lib/SPARK_Services/inc"
+INCLUDES+=-I"../inc"
+
 
 # Each subdirectory must supply rules for building sources it contributes
 src/%.o: ../src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: ARM Sourcery Windows GCC C Compiler'
-	arm-none-eabi-gcc -DUSE_STDPERIPH_DRIVER -DSTM32F10X_MD -I"../../core-common-lib/CMSIS/Include" -I"../../core-common-lib/CMSIS/Device/ST/STM32F10x/Include" -I"../../core-common-lib/STM32F10x_StdPeriph_Driver/inc" -I"../../core-common-lib/STM32_USB-FS-Device_Driver/inc" -I"../../core-common-lib/CC3000_Host_Driver" -I"../../core-common-lib/SPARK_Firmware_Driver/inc" -I"../inc" -Os -ffunction-sections -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -mcpu=cortex-m3 -mthumb -g3 -gdwarf-2 -o "$@" "$<"
+	arm-none-eabi-gcc -DSPARK_PRODUCT_ID=$(SPARK_PRODUCT_ID) -DUSE_STDPERIPH_DRIVER -D$(STM32_DEVICE_SYMBOL) $(INCLUDES) -Os -ffunction-sections -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -mcpu=cortex-m3 -mthumb -g3 -gdwarf-2 -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

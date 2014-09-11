@@ -3,6 +3,18 @@
 
 RM := rm -rf
 
+ifeq ("$(SPARK_PRODUCT_ID)","")
+SPARK_PRODUCT_ID=0
+$(info SPARK_PRODUCT_ID not set, assuming 0)
+endif
+
+STM32_DEVICE=stm32f10x_md
+ifeq ("$(SPARK_PRODUCT_ID)","2")
+STM32_DEVICE=stm32f10x_hd
+endif
+
+
+
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include startup/subdir.mk
@@ -34,6 +46,8 @@ else
 CFLAGS += -DRELEASE_BUILD
 endif
 
+CFLAGS += -DSPARK_PRODUCT_ID=$(SPARK_PRODUCT_ID)
+
 
 # Add inputs and outputs from these tool invocations to the build variables 
 SECONDARY_FLASH += \
@@ -45,7 +59,6 @@ bootloader.lst \
 SECONDARY_SIZE += \
 bootloader.siz \
 
-
 # All Target
 all: bootloader.elf secondary-outputs
 
@@ -56,7 +69,7 @@ dependents:
 bootloader.elf: $(OBJS) $(USER_OBJS) ../../core-common-lib/build/libcore-common-lib.a
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Sourcery Windows GCC C Linker'
-	arm-none-eabi-gcc -T"../linker/linker_stm32f10x_md.ld" -nostartfiles -Xlinker --gc-sections -L"../../core-common-lib/build" -Wl,-Map,bootloader.map -mcpu=cortex-m3 -mthumb -g3 -gdwarf-2 -o "bootloader.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -T"../linker/linker_$(STM32_DEVICE).ld" -nostartfiles -Xlinker --gc-sections -L"../../core-common-lib/build" -Wl,-Map,bootloader.map -mcpu=cortex-m3 -mthumb -g3 -gdwarf-2 -o "bootloader.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
