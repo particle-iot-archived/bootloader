@@ -6,7 +6,7 @@ The bootloader is the first thing that is executed upon a system reset. It resid
 
 ---
 
-###Program Flow  
+### Program Flow  
 
 * Initialize the system 
 * Load system flags
@@ -38,7 +38,7 @@ This mode is very similar to the factory reset mode. Upon detecting that the OTA
 
 ---
 
-###System Constants  
+### System Constants  
 
 USB_DFU_ADDRESS = 0x08000000  
 CORE_FW_ADDRESS = 0x08005000  
@@ -80,7 +80,7 @@ Length in bytes of DER-encoded 1024-bit RSA private key
 ---
 
 
-###Backup Registers
+### Backup Registers
 
 **BKP_DR10:**  
 *0x5000*  
@@ -94,7 +94,7 @@ Length in bytes of DER-encoded 1024-bit RSA private key
 
 ---
 
-###Memory Maps
+### Memory Maps
 
 **External Flash Memory Map**
 <table border = '1'>
